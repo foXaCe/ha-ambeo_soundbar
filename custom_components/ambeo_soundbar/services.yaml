@@ -1,0 +1,81 @@
+# Services for Ambeo Soundbar integration
+
+set_expert_audio_levels:
+  name: Set Expert Audio Levels
+  description: Configure advanced audio levels (voice enhancement, center, side, height speakers) for AMBEO Soundbar Max.
+  target:
+    device:
+      integration: ambeo_soundbar
+  fields:
+    voice_enhancement_level:
+      name: Voice Enhancement Level
+      description: Voice enhancement level (-6 to 6). Only available on Max.
+      required: false
+      example: 2
+      selector:
+        number:
+          min: -6
+          max: 6
+          step: 1
+          mode: slider
+    center_speaker_level:
+      name: Center Speaker Level
+      description: Center speaker level (-6 to 6). Only available on Max.
+      required: false
+      example: 0
+      selector:
+        number:
+          min: -6
+          max: 6
+          step: 1
+          mode: slider
+    side_firing_level:
+      name: Side Firing Level
+      description: Side firing speakers level (-6 to 6). Only available on Max.
+      required: false
+      example: 0
+      selector:
+        number:
+          min: -6
+          max: 6
+          step: 1
+          mode: slider
+    up_firing_level:
+      name: Up Firing Level
+      description: Height/up firing speakers level (-6 to 6). Only available on Max.
+      required: false
+      example: 0
+      selector:
+        number:
+          min: -6
+          max: 6
+          step: 1
+          mode: slider
+
+reset_expert_settings:
+  name: Reset Expert Audio Settings
+  description: Reset all expert audio settings to factory defaults. Only available on AMBEO Soundbar Max.
+  target:
+    device:
+      integration: ambeo_soundbar
+
+set_eq_preset:
+  name: Set Equalizer Preset
+  description: Apply a predefined equalizer preset for different content types.
+  target:
+    device:
+      integration: ambeo_soundbar
+  fields:
+    preset:
+      name: Preset
+      description: Select audio preset
+      required: true
+      example: "Movies"
+      selector:
+        select:
+          options:
+            - "Neutral"
+            - "Movies"
+            - "Sport"
+            - "News"
+            - "Music"
