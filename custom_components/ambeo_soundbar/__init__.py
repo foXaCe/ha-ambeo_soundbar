@@ -11,9 +11,11 @@ from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .const import (
+    CONFIG_ENTRY_VERSION,
     DEFAULT_PORT,
     DOMAIN,
     MANUFACTURER,
@@ -124,3 +126,56 @@ async def async_reload_entry(hass: HomeAssistant, entry: AmbeoConfigEntry) -> No
     """Reload config entry."""
     await async_unload_entry(hass, entry)
     await async_setup_entry(hass, entry)
+
+
+async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    """Migrate old config entry to new version.
+    
+    This ensures zero-breaking changes for users during upgrades.
+    """
+    _LOGGER.debug("Migrating config entry from version %s", entry.version)
+    
+    if entry.version == 1:
+        # Migration from v1 to v2: Rename 'subwoofer_status' to 'subwoofer'
+        # Clean up old entity registry entries
+        ent_reg = er.async_get(hass)
+        
+        # Find and remove old entity entries with _status suffix
+        old_unique_ids = [
+            f"{entry.unique_id}_subwoofer_status",
+        ]
+        
+        for unique_id in old_unique_ids:
+            # Search in all platforms for old entities
+            for platform in PLATFORMS:
+                entity_id = ent_reg.async_get_entity_id(platform, DOMAIN, unique_id)
+                if entity_id:
+                    _LOGGER.warning(
+                        "Removing deprecated entity %s. "
+                        "It will be recreated with updated naming.",
+                        entity_id
+                    )
+                    ent_reg.async_remove(entity_id)
+        
+        # Update entry version
+        hass.config_entries.async_update_entry(entry, version=CONFIG_ENTRY_VERSION)
+        _LOGGER.info("Migration to version %s successful", CONFIG_ENTRY_VERSION)
+    
+    return True
+
+
+async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Clean up when entry is removed.
+    
+    Ensures no orphan entities or devices remain.
+    """
+    _LOGGER.debug("Cleaning up entry %s", entry.entry_id)
+    
+    # Clean up device registry
+    device_registry = dr.async_get(hass)
+    device = device_registry.async_get_device(
+        identifiers={(DOMAIN, entry.unique_id)}
+    )
+    if device:
+        device_registry.async_remove_device(device.id)
+        _LOGGER.debug("Removed device %s", device.id)

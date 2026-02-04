@@ -16,6 +16,7 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from .const import (
     CONFIG_DEBOUNCE_COOLDOWN,
     CONFIG_DEBOUNCE_COOLDOWN_DEFAULT,
+    CONFIG_ENTRY_VERSION,
     CONFIG_HOST_DEFAULT,
     DEFAULT_PORT,
     DOMAIN,
@@ -56,7 +57,7 @@ async def validate_input(hass, data: dict[str, Any]) -> dict[str, Any]:
 class AmbeoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Ambeo Soundbar."""
 
-    VERSION = 1
+    VERSION = CONFIG_ENTRY_VERSION
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
