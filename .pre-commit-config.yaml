@@ -13,13 +13,15 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-json
+        exclude: ^\.vscode/
       - id: check-added-large-files
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.3.0
     hooks:
       - id: codespell
-        args: [--ignore-words-list, "hass,ambeo"]
+        args: [--ignore-words-list, "hass,ambeo,adresse,connexion,projet,complet,transforme,correspondant"]
+        exclude: ".vscode/settings.json"
 
 ci:
   autofix_commit_msg: "style: auto-fix by pre-commit"
