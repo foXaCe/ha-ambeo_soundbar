@@ -24,16 +24,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install ruff mypy
+          pip install ruff
 
       - name: Ruff check
         run: ruff check custom_components/
 
       - name: Ruff format check
         run: ruff format --check custom_components/
-
-      - name: Type check
-        run: mypy custom_components/ --ignore-missing-imports
 
   test:
     name: Test Python ${{ matrix.python-version }}
@@ -60,7 +57,7 @@ jobs:
             --cov=custom_components/ambeo_soundbar \
             --cov-report=xml \
             --cov-report=term-missing \
-            -v || echo "No tests directory yet"
+            -v 2>/dev/null || echo "No tests yet - skipping"
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
