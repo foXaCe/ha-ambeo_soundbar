@@ -1,10 +1,33 @@
-"""API Exceptions for Ambeo Soundbar - Re-exported from root."""
+"""API Exceptions for Ambeo Soundbar - Re-exported from root.
+
+All exceptions are defined in the root exceptions module for consistency.
+This module provides convenient access when importing from the api package.
+"""
+
+from __future__ import annotations
 
 from ..exceptions import (
+    AmbeoAuthError,
+    AmbeoCircuitBreakerError,
     AmbeoConnectionError,
     AmbeoError,
-    AmbeoAuthError,
+    AmbeoNotFoundError,
+    AmbeoRateLimitError,
     AmbeoResponseError,
+    AmbeoServerError,
+    AmbeoTimeoutError,
+    AmbeoValidationError,
 )
 
-__all__ = ["AmbeoConnectionError", "AmbeoError", "AmbeoAuthError", "AmbeoResponseError"]
+__all__ = [
+    "AmbeoError",
+    "AmbeoConnectionError",
+    "AmbeoAuthError",
+    "AmbeoResponseError",
+    "AmbeoRateLimitError",
+    "AmbeoCircuitBreakerError",
+    "AmbeoTimeoutError",
+    "AmbeoNotFoundError",
+    "AmbeoServerError",
+    "AmbeoValidationError",
+]
