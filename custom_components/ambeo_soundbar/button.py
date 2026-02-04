@@ -1,10 +1,15 @@
+from typing import TYPE_CHECKING
+
 from homeassistant.components.button import ButtonDeviceClass, ButtonEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
-from .entity import AmbeoBaseEntity
+
 from .const import DOMAIN, Capability
-from .api.impl.generic_api import AmbeoApi
+from .entity import AmbeoBaseEntity
+
+if TYPE_CHECKING:
+    from .api.impl.generic_api import AmbeoApi
 
 
 class AmbeoReboot(AmbeoBaseEntity, ButtonEntity):

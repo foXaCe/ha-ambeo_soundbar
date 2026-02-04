@@ -1,14 +1,15 @@
 import logging
+from typing import TYPE_CHECKING
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 
-
 from .const import DOMAIN, Capability
 from .entity import AmbeoBaseSwitch
-from .api.impl.generic_api import AmbeoApi
 
+if TYPE_CHECKING:
+    from .api.impl.generic_api import AmbeoApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -34,7 +35,7 @@ class SubWooferStatus(AmbeoBaseSwitch):
             status = await self.api.get_subwoofer_status()
             self._is_on = status
         except Exception as e:
-            _LOGGER.error("Failed to update subwoofer status: %s", e)
+            _LOGGER.exception("Failed to update subwoofer status: %s", e)
 
 
 class VoiceEnhancementMode(AmbeoBaseSwitch):
@@ -58,7 +59,7 @@ class VoiceEnhancementMode(AmbeoBaseSwitch):
             status = await self.api.get_voice_enhancement()
             self._is_on = status
         except Exception as e:
-            _LOGGER.error("Failed to update voice enhancement status: %s", e)
+            _LOGGER.exception("Failed to update voice enhancement status: %s", e)
 
 
 class SoundFeedback(AmbeoBaseSwitch):
@@ -82,7 +83,7 @@ class SoundFeedback(AmbeoBaseSwitch):
             status = await self.api.get_sound_feedback()
             self._is_on = status
         except Exception as e:
-            _LOGGER.error("Failed to update sound feedback status: %s", e)
+            _LOGGER.exception("Failed to update sound feedback status: %s", e)
 
 
 class AmbeoMode(AmbeoBaseSwitch):
@@ -106,7 +107,7 @@ class AmbeoMode(AmbeoBaseSwitch):
             status = await self.api.get_ambeo_mode()
             self._is_on = status
         except Exception as e:
-            _LOGGER.error("Failed to update Ambeo mode status: %s", e)
+            _LOGGER.exception("Failed to update Ambeo mode status: %s", e)
 
 
 class NightMode(AmbeoBaseSwitch):
@@ -130,7 +131,7 @@ class NightMode(AmbeoBaseSwitch):
             status = await self.api.get_night_mode()
             self._is_on = status
         except Exception as e:
-            _LOGGER.error("Failed to update night mode status: %s", e)
+            _LOGGER.exception("Failed to update night mode status: %s", e)
 
 
 class AmbeoBluetoothPairing(AmbeoBaseSwitch):
@@ -161,7 +162,7 @@ class AmbeoBluetoothPairing(AmbeoBaseSwitch):
             status = await self.api.get_bluetooth_pairing_state()
             self._is_on = status
         except Exception as e:
-            _LOGGER.error("Failed to update bluetooth pairing status: %s", e)
+            _LOGGER.exception("Failed to update bluetooth pairing status: %s", e)
 
 
 async def async_setup_entry(
@@ -172,12 +173,18 @@ async def async_setup_entry(
     """Set up the switch entities from a config entry created in the integrations UI."""
     ambeo_api: AmbeoApi = hass.data[DOMAIN][config_entry.entry_id]["api"]
     ambeo_device = hass.data[DOMAIN][config_entry.entry_id]["device"]
-    entities = [NightMode(ambeo_device, ambeo_api), AmbeoMode(
-        ambeo_device, ambeo_api), SoundFeedback(ambeo_device, ambeo_api)]
+    entities = [
+        NightMode(ambeo_device, ambeo_api),
+        AmbeoMode(ambeo_device, ambeo_api),
+        SoundFeedback(ambeo_device, ambeo_api),
+    ]
     if ambeo_api.has_capability(Capability.VOICE_ENHANCEMENT_TOGGLE):
         entities.append(VoiceEnhancementMode(ambeo_device, ambeo_api))
     if ambeo_api.has_capability(Capability.BLUETOOTH_PAIRING):
         entities.append(AmbeoBluetoothPairing(ambeo_device, ambeo_api))
-    if ambeo_api.has_capability(Capability.SUBWOOFER) and await ambeo_api.has_subwoofer():
+    if (
+        ambeo_api.has_capability(Capability.SUBWOOFER)
+        and await ambeo_api.has_subwoofer()
+    ):
         entities.append(SubWooferStatus(ambeo_device, ambeo_api))
     async_add_entities(entities, update_before_add=True)

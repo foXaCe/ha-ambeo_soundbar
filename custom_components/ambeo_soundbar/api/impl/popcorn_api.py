@@ -1,25 +1,27 @@
 import json
+from typing import ClassVar
 
-from .generic_api import AmbeoApi
 from ...const import AMBEO_POPCORN_VOLUME_STEP, Capability
+from .generic_api import AmbeoApi
 
 
 class AmbeoPopcornApi(AmbeoApi):
-
     _has_subwoofer = None
 
-    additional_inputs = [
+    additional_inputs: ClassVar[list] = [
         {"id": "googlecast", "title": "Google Cast"},
-        {"id": "airplay", "title": "AirPlay"}
+        {"id": "airplay", "title": "AirPlay"},
     ]
 
-    capabilities = [Capability.AMBEO_LOGO,
-                    Capability.LED_BAR,
-                    Capability.CODEC_LED,
-                    Capability.VOICE_ENHANCEMENT_TOGGLE,
-                    Capability.BLUETOOTH_PAIRING,
-                    Capability.SUBWOOFER,
-                    Capability.ECO_MODE]
+    capabilities: ClassVar[list] = [
+        Capability.AMBEO_LOGO,
+        Capability.LED_BAR,
+        Capability.CODEC_LED,
+        Capability.VOICE_ENHANCEMENT_TOGGLE,
+        Capability.BLUETOOTH_PAIRING,
+        Capability.SUBWOOFER,
+        Capability.ECO_MODE,
+    ]
 
     def has_capability(self, capa):
         return capa in self.capabilities
@@ -31,37 +33,52 @@ class AmbeoPopcornApi(AmbeoApi):
         return AMBEO_POPCORN_VOLUME_STEP
 
     async def get_bluetooth_pairing_state(self):
-        bluetooth_pairing_state = await self.get_value("bluetooth:state", "bluetoothState")
+        bluetooth_pairing_state = await self.get_value(
+            "bluetooth:state", "bluetoothState"
+        )
         if bluetooth_pairing_state:
             return bluetooth_pairing_state["pairable"]
         return None
 
     async def set_bluetooth_pairing_state(self, state):
-        await self.execute_request("setData", "bluetooth:deviceList/discoverable", "activate", json.dumps({"type": "bool_", "bool_": state}))
+        await self.execute_request(
+            "setData",
+            "bluetooth:deviceList/discoverable",
+            "activate",
+            json.dumps({"type": "bool_", "bool_": state}),
+        )
 
     async def get_night_mode(self):
         return await self.get_value("settings:/popcorn/audio/nightModeStatus", "bool_")
 
     async def set_night_mode(self, night_mode):
-        await self.set_value("settings:/popcorn/audio/nightModeStatus", "bool_", night_mode)
+        await self.set_value(
+            "settings:/popcorn/audio/nightModeStatus", "bool_", night_mode
+        )
 
     async def get_voice_enhancement(self):
         return await self.get_value("settings:/popcorn/audio/voiceEnhancement", "bool_")
 
     async def set_voice_enhancement(self, voice_enhancement_mode):
-        await self.set_value("settings:/popcorn/audio/voiceEnhancement", "bool_", voice_enhancement_mode)
+        await self.set_value(
+            "settings:/popcorn/audio/voiceEnhancement", "bool_", voice_enhancement_mode
+        )
 
     async def get_ambeo_mode(self):
         return await self.get_value("settings:/popcorn/audio/ambeoModeStatus", "bool_")
 
     async def set_ambeo_mode(self, ambeo_mode):
-        await self.set_value("settings:/popcorn/audio/ambeoModeStatus", "bool_", ambeo_mode)
+        await self.set_value(
+            "settings:/popcorn/audio/ambeoModeStatus", "bool_", ambeo_mode
+        )
 
     async def get_sound_feedback(self):
         return await self.get_value("settings:/popcorn/ux/soundFeedbackStatus", "bool_")
 
     async def set_sound_feedback(self, state):
-        return await self.set_value("settings:/popcorn/ux/soundFeedbackStatus", "bool_", state)
+        return await self.set_value(
+            "settings:/popcorn/ux/soundFeedbackStatus", "bool_", state
+        )
 
     async def get_current_source(self):
         return await self.get_value("popcorn:inputChange/selected", "popcornInputId")
@@ -75,37 +92,57 @@ class AmbeoPopcornApi(AmbeoApi):
         return None
 
     async def set_source(self, source_id):
-        await self.execute_request("setData", f"ui:/inputs/{source_id}", "activate", json.dumps({"type": "bool_", "bool_": True}))
+        await self.execute_request(
+            "setData",
+            f"ui:/inputs/{source_id}",
+            "activate",
+            json.dumps({"type": "bool_", "bool_": True}),
+        )
 
     async def get_current_preset(self):
-        return await self.get_value("settings:/popcorn/audio/audioPresets/audioPreset", "popcornAudioPreset")
+        return await self.get_value(
+            "settings:/popcorn/audio/audioPresets/audioPreset", "popcornAudioPreset"
+        )
 
     async def set_preset(self, preset):
-        await self.set_value("settings:/popcorn/audio/audioPresets/audioPreset", "popcornAudioPreset", preset)
+        await self.set_value(
+            "settings:/popcorn/audio/audioPresets/audioPreset",
+            "popcornAudioPreset",
+            preset,
+        )
 
     async def get_all_presets(self):
-        data = await self.execute_request("getRows", "settings:/popcorn/audio/audioPresetValues", "@all", None, 0, 10)
+        data = await self.execute_request(
+            "getRows", "settings:/popcorn/audio/audioPresetValues", "@all", None, 0, 10
+        )
         if data:
             rows = self.extract_data(data, ["rows"])
-            simplified_list = [
-                {"title": row['title'], "id": row['value']['popcornAudioPreset']} for row in rows]
-            return simplified_list
+            return [
+                {"title": row["title"], "id": row["value"]["popcornAudioPreset"]}
+                for row in rows
+            ]
         return None
 
     async def get_codec_led_brightness(self):
         return await self.get_value("ui:/settings/interface/codecLedBrightness", "i32_")
 
     async def set_codec_led_brightness(self, brightness):
-        await self.set_value("ui:/settings/interface/codecLedBrightness", "i32_", brightness)
+        await self.set_value(
+            "ui:/settings/interface/codecLedBrightness", "i32_", brightness
+        )
 
     async def get_logo_brightness(self):
-        return await self.get_value("ui:/settings/interface/ambeoSection/brightness", "i32_")
+        return await self.get_value(
+            "ui:/settings/interface/ambeoSection/brightness", "i32_"
+        )
 
     async def get_logo_state(self):
         return await self.get_value("settings:/popcorn/ui/ledStatus", "bool_")
 
     async def set_logo_brightness(self, brightness):
-        await self.set_value("ui:/settings/interface/ambeoSection/brightness", "i32_", brightness)
+        await self.set_value(
+            "ui:/settings/interface/ambeoSection/brightness", "i32_", brightness
+        )
 
     async def change_logo_state(self, value):
         await self.set_value("settings:/popcorn/ui/ledStatus", "bool_", value)
@@ -118,7 +155,9 @@ class AmbeoPopcornApi(AmbeoApi):
 
     async def has_subwoofer(self):
         if self._has_subwoofer is None:
-            list = await self.get_value("settings:/popcorn/subwoofer/list", "popcornSubwooferList")
+            list = await self.get_value(
+                "settings:/popcorn/subwoofer/list", "popcornSubwooferList"
+            )
             if list is not None:
                 self._has_subwoofer = len(list) > 0
         return self._has_subwoofer

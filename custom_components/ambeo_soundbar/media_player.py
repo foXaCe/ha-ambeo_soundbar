@@ -1,26 +1,42 @@
 import asyncio
+import copy
 import logging
 import time
-import copy
+from typing import TYPE_CHECKING
 
-from homeassistant.components.media_player import MediaPlayerEntity, MediaPlayerEntityFeature
+from homeassistant.components.media_player import (
+    MediaPlayerEntity,
+    MediaPlayerEntityFeature,
+)
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import STATE_ON, STATE_PAUSED, STATE_PLAYING, STATE_STANDBY, STATE_IDLE
+from homeassistant.const import (
+    STATE_IDLE,
+    STATE_ON,
+    STATE_PAUSED,
+    STATE_PLAYING,
+    STATE_STANDBY,
+)
 from homeassistant.core import HomeAssistant
 
-from .const import CONFIG_DEBOUNCE_COOLDOWN, CONFIG_DEBOUNCE_COOLDOWN_DEFAULT, DOMAIN, Capability
+from .const import (
+    CONFIG_DEBOUNCE_COOLDOWN,
+    CONFIG_DEBOUNCE_COOLDOWN_DEFAULT,
+    DOMAIN,
+    Capability,
+)
 from .entity import AmbeoBaseEntity
 from .util import find_id_by_title, find_title_by_id
-from .api.impl.generic_api import AmbeoApi
 
+if TYPE_CHECKING:
+    from .api.impl.generic_api import AmbeoApi
 
 _LOGGER = logging.getLogger(__name__)
 
 STATE_DICT = {
-    'playing': STATE_PLAYING,
-    'paused': STATE_PAUSED,
-    'stopped': STATE_IDLE,
-    'online': STATE_ON
+    "playing": STATE_PLAYING,
+    "paused": STATE_PAUSED,
+    "stopped": STATE_IDLE,
+    "online": STATE_ON,
 }
 
 
@@ -40,7 +56,8 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
 
     def update_debounce_mode(self, config_entry):
         self._debounce_cooldown = config_entry.options.get(
-            CONFIG_DEBOUNCE_COOLDOWN, CONFIG_DEBOUNCE_COOLDOWN_DEFAULT)
+            CONFIG_DEBOUNCE_COOLDOWN, CONFIG_DEBOUNCE_COOLDOWN_DEFAULT
+        )
         if self.debounce_mode_activated:
             _LOGGER.debug("Debounce mode activated")
             self._debounce_task = None
@@ -52,7 +69,8 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
     def __init__(self, device, api, sources, presets, config_entry):
         super().__init__(device, api, "Player", "player")
         config_entry.async_on_unload(
-            config_entry.add_update_listener(self._async_entry_updated))
+            config_entry.add_update_listener(self._async_entry_updated)
+        )
 
         self.update_debounce_mode(config_entry)
         self._power_state = STATE_ON
@@ -69,10 +87,10 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
         self._presets = presets
         self._current_preset = None
         self._volume_step = api.get_volume_step()
-        if (api.has_capability(Capability.STANDBY)):
-            STATE_DICT['networkStandby'] = STATE_STANDBY
+        if api.has_capability(Capability.STANDBY):
+            STATE_DICT["networkStandby"] = STATE_STANDBY
         else:
-            STATE_DICT['networkStandby'] = STATE_IDLE
+            STATE_DICT["networkStandby"] = STATE_IDLE
 
     @property
     def debounce_mode_activated(self):
@@ -81,19 +99,22 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
     @property
     def supported_features(self):
         """Flag media player features that are supported."""
-        features = (MediaPlayerEntityFeature.VOLUME_SET
-                    | MediaPlayerEntityFeature.VOLUME_MUTE
-                    | MediaPlayerEntityFeature.VOLUME_STEP
-                    | MediaPlayerEntityFeature.SELECT_SOURCE
-                    | MediaPlayerEntityFeature.SELECT_SOUND_MODE
-                    | MediaPlayerEntityFeature.PLAY
-                    | MediaPlayerEntityFeature.PAUSE
-                    | MediaPlayerEntityFeature.NEXT_TRACK
-                    | MediaPlayerEntityFeature.PREVIOUS_TRACK)
+        features = (
+            MediaPlayerEntityFeature.VOLUME_SET
+            | MediaPlayerEntityFeature.VOLUME_MUTE
+            | MediaPlayerEntityFeature.VOLUME_STEP
+            | MediaPlayerEntityFeature.SELECT_SOURCE
+            | MediaPlayerEntityFeature.SELECT_SOUND_MODE
+            | MediaPlayerEntityFeature.PLAY
+            | MediaPlayerEntityFeature.PAUSE
+            | MediaPlayerEntityFeature.NEXT_TRACK
+            | MediaPlayerEntityFeature.PREVIOUS_TRACK
+        )
 
         if self.api.has_capability(Capability.STANDBY):
-            features |= (MediaPlayerEntityFeature.TURN_ON |
-                         MediaPlayerEntityFeature.TURN_OFF)
+            features |= (
+                MediaPlayerEntityFeature.TURN_ON | MediaPlayerEntityFeature.TURN_OFF
+            )
         return features
 
     @property
@@ -165,14 +186,12 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
 
     @property
     def source_id(self):
-        return find_id_by_title(
-            self.source, self._sources)
+        return find_id_by_title(self.source, self._sources)
 
     @property
     def source_list(self):
         """List of available sources."""
-        titles = [entry["title"]
-                  for entry in self._sources if "title" in entry]
+        titles = [entry["title"] for entry in self._sources if "title" in entry]
         return sorted(titles)
 
     async def async_select_source(self, source):
@@ -191,8 +210,7 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
     @property
     def sound_mode_list(self):
         """List of available audio presets."""
-        titles = [preset["title"]
-                  for preset in self._presets if "title" in preset]
+        titles = [preset["title"] for preset in self._presets if "title" in preset]
         return sorted(titles)
 
     @property
@@ -246,14 +264,14 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
             result = await api_method()
             setter(transform(result))
         except Exception as e:
-            _LOGGER.error(error_msg, e)
+            _LOGGER.exception(error_msg, e)
 
     async def update_state(self):
         await self._update_attr(
             self.api.get_state,
             lambda state: STATE_DICT.get(state, state),
             lambda value: setattr(self, "_power_state", value),
-            "Failed to get state: %s"
+            "Failed to get state: %s",
         )
 
     async def update_preset(self):
@@ -261,7 +279,7 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
             self.api.get_current_preset,
             lambda preset_id: find_title_by_id(preset_id, self._presets),
             lambda value: setattr(self, "_current_preset", value),
-            "Failed to get preset: %s"
+            "Failed to get preset: %s",
         )
 
     async def update_source(self):
@@ -269,7 +287,7 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
             self.api.get_current_source,
             lambda source_id: find_title_by_id(source_id, self._sources),
             lambda value: setattr(self, "_current_source", value),
-            "Failed to get source: %s"
+            "Failed to get source: %s",
         )
 
     async def update_mute(self):
@@ -277,7 +295,7 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
             self.api.is_mute,
             lambda muted: muted,
             lambda value: setattr(self, "_muted", value),
-            "Failed to get mute: %s"
+            "Failed to get mute: %s",
         )
 
     async def update_volume(self):
@@ -285,21 +303,23 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
             self.api.get_volume,
             lambda volume: volume / self._max_volume,
             lambda value: setattr(self, "_volume", value),
-            "Failed to get volume: %s"
+            "Failed to get volume: %s",
         )
 
     def _should_debounce(self, player_state):
         """Determine if the update should be debounced."""
-        return (player_state == 'stopped' and
-                self._power_state != STATE_STANDBY and
-                self._playing_state != STATE_IDLE)
+        return (
+            player_state == "stopped"
+            and self._power_state != STATE_STANDBY
+            and self._playing_state != STATE_IDLE
+        )
 
     async def _cancel_existing_debounce(self):
         """Cancel the existing debounce task, if any."""
         if (
-            hasattr(self, "_debounce_task") and
-            self._debounce_task is not None and
-            not self._debounce_task.done()
+            hasattr(self, "_debounce_task")
+            and self._debounce_task is not None
+            and not self._debounce_task.done()
         ):
             _LOGGER.debug("[IMMEDIATE] Cancelling existing debounce task.")
             self._debounce_task.cancel()
@@ -313,15 +333,19 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
         try:
             player_data = await self.api.player_data()
             player_state = player_data.get("state")
-            if player_state == 'transitioning':
+            if player_state == "transitioning":
                 _LOGGER.debug(
-                    "[IMMEDIATE] Immediate update requested, state: '%s' will not be processed.", player_state)
+                    "[IMMEDIATE] Immediate update requested, state: '%s' will not be processed.",
+                    player_state,
+                )
                 return
             if self.debounce_mode_activated:
                 async with self._update_lock:
                     if self._should_debounce(player_state):
                         _LOGGER.debug(
-                            "[TASK] Debounced update requested, state: '%s'", player_state)
+                            "[TASK] Debounced update requested, state: '%s'",
+                            player_state,
+                        )
                         if self._debounce_task is None:
                             self._debounce_start = time.time()
                             self._debounce_task = asyncio.create_task(
@@ -329,19 +353,22 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
                             )
                         else:
                             elapsed = time.time() - self._debounce_start
-                            remaining = max(
-                                0, self._debounce_cooldown - elapsed)
+                            remaining = max(0, self._debounce_cooldown - elapsed)
                             _LOGGER.debug(
-                                "[TASK] Debounce task already running... %s seconds remaining.", round(remaining, 1))
+                                "[TASK] Debounce task already running... %s seconds remaining.",
+                                round(remaining, 1),
+                            )
                     else:
                         _LOGGER.debug(
-                            "[IMMEDIATE] Immediate update requested, state: '%s'", player_state)
+                            "[IMMEDIATE] Immediate update requested, state: '%s'",
+                            player_state,
+                        )
                         await self._cancel_existing_debounce()
                         self._process_player_data(player_data)
             else:
                 self._process_player_data(player_data)
         except Exception as e:
-            _LOGGER.error("Failed to get player data: %s", e)
+            _LOGGER.exception("Failed to get player data: %s", e)
 
     async def _debounced_update(self, player_data):
         """Handle the debounced update after the cooldown delay."""
@@ -352,7 +379,9 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
             # Check if the debounce task was cancelled before proceeding.
             if (
                 # ...dangling task when cancelled via config entry reload
-                not hasattr(self, "_debounce_task") or self._debounce_task is None or
+                not hasattr(self, "_debounce_task")
+                or self._debounce_task is None
+                or
                 # ...dangling task when failed to cancel properly
                 self._debounce_task.cancelled()
             ):
@@ -393,5 +422,6 @@ async def async_setup_entry(
     sources = await ambeo_api.get_all_sources()
     presets = await ambeo_api.get_all_presets()
     ambeo_player = AmbeoMediaPlayer(
-        ambeo_device, ambeo_api, sources, presets, config_entry)
+        ambeo_device, ambeo_api, sources, presets, config_entry
+    )
     async_add_entities([ambeo_player], update_before_add=True)

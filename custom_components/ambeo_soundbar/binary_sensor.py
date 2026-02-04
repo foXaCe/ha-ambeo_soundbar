@@ -1,14 +1,15 @@
 import logging
+from typing import TYPE_CHECKING
 
+from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import EntityCategory
-from homeassistant.components.binary_sensor import BinarySensorEntity
 
 from .const import DOMAIN, Capability
 from .entity import AmbeoBaseEntity
-from .api.impl.generic_api import AmbeoApi
 
+if TYPE_CHECKING:
+    from .api.impl.generic_api import AmbeoApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,7 +37,7 @@ class EcoModeSensor(AmbeoBaseEntity, BinarySensorEntity):
             status = await self.api.get_eco_mode()
             self._is_on = status
         except Exception as e:
-            _LOGGER.error("Failed to update eco mode status: %s", e)
+            _LOGGER.exception("Failed to update eco mode status: %s", e)
 
 
 async def async_setup_entry(

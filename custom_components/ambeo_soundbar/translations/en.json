@@ -9,13 +9,18 @@
         "data_description": {
           "host": "Hostname or IP address of the Ambeo Soundbar (e.g., ambeo.local or 192.168.1.x)"
         }
+      },
+      "discovery_confirm": {
+        "title": "Discovered Ambeo Soundbar",
+        "description": "An Ambeo Soundbar ({name}) has been discovered on your network. Do you want to add it to Home Assistant?"
       }
     },
     "error": {
       "cannot_connect": "Failed to connect to the Ambeo Soundbar. Please verify the host and ensure the soundbar is powered on."
     },
     "abort": {
-      "already_configured": "Device is already configured"
+      "already_configured": "Device is already configured",
+      "cannot_connect": "Could not connect to the discovered device"
     }
   },
   "options": {
@@ -35,6 +40,51 @@
     "error": {
       "cannot_connect": "Failed to connect to the Ambeo Soundbar. Please verify the host and ensure the soundbar is powered on.",
       "experimental_feature_activated": "Experimental feature activated. Please report any issues encountered."
+    }
+  },
+  "entity": {
+    "select": {
+      "audio_preset": {
+        "name": "Audio Preset"
+      }
+    }
+  },
+  "services": {
+    "set_expert_audio_levels": {
+      "name": "Set Expert Audio Levels",
+      "description": "Configure advanced audio levels (voice enhancement, center, side, height speakers). Only available on AMBEO Soundbar Max.",
+      "fields": {
+        "voice_enhancement_level": {
+          "name": "Voice Enhancement Level",
+          "description": "Voice enhancement level (-6 to 6)"
+        },
+        "center_speaker_level": {
+          "name": "Center Speaker Level",
+          "description": "Center speaker level (-6 to 6)"
+        },
+        "side_firing_level": {
+          "name": "Side Firing Level",
+          "description": "Side firing speakers level (-6 to 6)"
+        },
+        "up_firing_level": {
+          "name": "Up Firing Level",
+          "description": "Height/up firing speakers level (-6 to 6)"
+        }
+      }
+    },
+    "reset_expert_settings": {
+      "name": "Reset Expert Audio Settings",
+      "description": "Reset all expert audio settings to factory defaults. Only available on AMBEO Soundbar Max."
+    },
+    "set_eq_preset": {
+      "name": "Set Equalizer Preset",
+      "description": "Apply a predefined equalizer preset for different content types.",
+      "fields": {
+        "preset": {
+          "name": "Preset",
+          "description": "Select audio preset (Neutral, Movies, Sport, News, Music)"
+        }
+      }
     }
   }
 }

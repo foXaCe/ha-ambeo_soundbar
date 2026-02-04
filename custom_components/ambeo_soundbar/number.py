@@ -1,16 +1,16 @@
 import logging
+from typing import TYPE_CHECKING
 
+from homeassistant.components.number import NumberDeviceClass
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
-from homeassistant.components.number import NumberDeviceClass
-
 
 from .const import DOMAIN, Capability
 from .entity import AmbeoBaseNumber
 
-from .api.impl.generic_api import AmbeoApi
-
+if TYPE_CHECKING:
+    from .api.impl.generic_api import AmbeoApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class SubWooferVolume(AmbeoBaseNumber):
             volume = await self.api.get_subwoofer_volume()
             self._current_value = volume
         except Exception as e:
-            _LOGGER.error("Failed to update subwoofer status: %s", e)
+            _LOGGER.exception("Failed to update subwoofer status: %s", e)
 
     @property
     def native_step(self):
@@ -40,7 +40,7 @@ class SubWooferVolume(AmbeoBaseNumber):
 
     @property
     def native_min_value(self):
-        """Min value """
+        """Min value"""
         return self.api.get_subwoofer_min_value()
 
     @property
@@ -75,7 +75,7 @@ class VoiceEnhancementLevel(AmbeoBaseNumber):
             level = await self.api.get_voice_enhancement_level()
             self._current_value = level
         except Exception as e:
-            _LOGGER.error("Failed to update voice enhancement level: %s", e)
+            _LOGGER.exception("Failed to update voice enhancement level: %s", e)
 
     @property
     def native_step(self):
@@ -114,7 +114,7 @@ class CenterSpeakerLevel(AmbeoBaseNumber):
             level = await self.api.get_center_speaker_level()
             self._current_value = level
         except Exception as e:
-            _LOGGER.error("Failed to update center speaker level: %s", e)
+            _LOGGER.exception("Failed to update center speaker level: %s", e)
 
     @property
     def native_step(self):
@@ -162,7 +162,7 @@ class SideFiringLevel(AmbeoBaseNumber):
             level = await self.api.get_side_firing_level()
             self._current_value = level
         except Exception as e:
-            _LOGGER.error("Failed to update side firing speakers level: %s", e)
+            _LOGGER.exception("Failed to update side firing speakers level: %s", e)
 
     @property
     def native_step(self):
@@ -210,7 +210,7 @@ class UpFiringLevel(AmbeoBaseNumber):
             level = await self.api.get_up_firing_level()
             self._current_value = level
         except Exception as e:
-            _LOGGER.error("Failed to update up firing speakers level: %s", e)
+            _LOGGER.exception("Failed to update up firing speakers level: %s", e)
 
     @property
     def native_step(self):
@@ -251,7 +251,10 @@ async def async_setup_entry(
     ambeo_api: AmbeoApi = hass.data[DOMAIN][config_entry.entry_id]["api"]
     ambeo_device = hass.data[DOMAIN][config_entry.entry_id]["device"]
     entities = []
-    if ambeo_api.has_capability(Capability.SUBWOOFER) and await ambeo_api.has_subwoofer():
+    if (
+        ambeo_api.has_capability(Capability.SUBWOOFER)
+        and await ambeo_api.has_subwoofer()
+    ):
         entities.append(SubWooferVolume(ambeo_device, ambeo_api))
     if ambeo_api.has_capability(Capability.VOICE_ENHANCEMENT_LEVEL):
         entities.append(VoiceEnhancementLevel(ambeo_device, ambeo_api))
