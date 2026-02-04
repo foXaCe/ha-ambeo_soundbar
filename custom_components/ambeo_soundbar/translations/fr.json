@@ -60,7 +60,7 @@
     },
     "switch": {
       "subwoofer": {
-        "name": "Caisson de basses"
+        "name": "Subwoofer"
       },
       "voice_enhancement": {
         "name": "Amélioration de la voix"
@@ -97,7 +97,7 @@
     },
     "number": {
       "subwoofer_volume": {
-        "name": "Volume du caisson de basses"
+        "name": "Volume Subwoofer"
       },
       "voice_enhancement_level": {
         "name": "Niveau d'amélioration de la voix"
