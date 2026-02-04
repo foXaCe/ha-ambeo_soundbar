@@ -25,7 +25,14 @@ jobs:
         id: changelog
         run: |
           # Extract section for this version from CHANGELOG.md
-          changelog=$(sed -n "/## \[${{ steps.version.outputs.version }}\]/,/## \[/p" CHANGELOG.md | sed '1d;$d' || echo "See CHANGELOG.md for details")
+          if [ -f CHANGELOG.md ]; then
+            changelog=$(sed -n "/## \[${{ steps.version.outputs.version }}\]/,/## \[/p" CHANGELOG.md 2>/dev/null | sed '1d;$d' || true)
+            if [ -z "$changelog" ]; then
+              changelog="See [CHANGELOG.md](CHANGELOG.md) for details"
+            fi
+          else
+            changelog="See commit history for details"
+          fi
           echo "changelog<<EOF" >> $GITHUB_OUTPUT
           echo "$changelog" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT

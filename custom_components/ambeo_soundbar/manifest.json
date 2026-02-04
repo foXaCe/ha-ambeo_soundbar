@@ -2,17 +2,17 @@
   "domain": "ambeo_soundbar",
   "name": "Ambeo Soundbar",
   "codeowners": [
-    "@faizpuru"
+    "@foXaCe"
   ],
   "config_flow": true,
   "dependencies": [
     "http",
     "zeroconf"
   ],
-  "documentation": "https://github.com/faizpuru/ha-ambeo_soundbar",
+  "documentation": "https://github.com/foXaCe/ha-ambeo_soundbar",
   "integration_type": "device",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/faizpuru/ha-ambeo_soundbar",
+  "issue_tracker": "https://github.com/foXaCe/ha-ambeo_soundbar",
   "requirements": [],
   "version": "1.1.0",
   "zeroconf": [
