@@ -4,7 +4,8 @@ set_expert_audio_levels:
   name: Set Expert Audio Levels
   description: Configure advanced audio levels (voice enhancement, center, side, height speakers) for AMBEO Soundbar Max.
   target:
-    device:
+    entity:
+      domain: media_player
       integration: ambeo_soundbar
   fields:
     voice_enhancement_level:
@@ -56,14 +57,16 @@ reset_expert_settings:
   name: Reset Expert Audio Settings
   description: Reset all expert audio settings to factory defaults. Only available on AMBEO Soundbar Max.
   target:
-    device:
+    entity:
+      domain: media_player
       integration: ambeo_soundbar
 
 set_eq_preset:
   name: Set Equalizer Preset
   description: Apply a predefined equalizer preset for different content types.
   target:
-    device:
+    entity:
+      domain: media_player
       integration: ambeo_soundbar
   fields:
     preset:
