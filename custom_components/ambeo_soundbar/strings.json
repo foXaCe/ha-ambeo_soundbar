@@ -3,16 +3,30 @@
   "config": {
     "step": {
       "user": {
+        "title": "Ambeo Soundbar",
+        "description": "Set up your Ambeo Soundbar",
         "data": {
           "host": "Host"
         },
-        "description": "Set up your Ambeo Soundbar",
-        "title": "Ambeo Soundbar"
+        "data_description": {
+          "host": "Hostname or IP address of your Ambeo Soundbar (e.g., ambeo.local or 192.168.1.x)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Ambeo Soundbar",
+        "description": "Update your Ambeo Soundbar configuration",
+        "data": {
+          "host": "Host"
+        },
+        "data_description": {
+          "host": "Hostname or IP address of your Ambeo Soundbar (e.g., ambeo.local or 192.168.1.x)"
+        }
       }
     },
     "error": {
       "cannot_connect": "Failed to connect",
-      "unknown": "Unexpected error"
+      "unknown": "Unexpected error",
+      "wrong_device": "Wrong device - serial number mismatch"
     },
     "abort": {
       "already_configured": "Device is already configured"
@@ -21,11 +35,16 @@
   "options": {
     "step": {
       "init": {
+        "title": "Ambeo Soundbar Options",
+        "description": "Configure your Ambeo Soundbar options",
         "data": {
           "host": "Host",
-          "debounce_cooldown": "Debounce Cooldown"
+          "debounce_cooldown": "Debounce Cooldown (Experimental)"
         },
-        "description": "Configure your Ambeo Soundbar options"
+        "data_description": {
+          "host": "Hostname or IP address of your Ambeo Soundbar (e.g., ambeo.local or 192.168.1.x)",
+          "debounce_cooldown": "If you experience unusual player state behavior constantly switching between 'Playing' and 'Idle', consider using this setting. Sets a delay (in seconds) before transitioning to 'Idle' state when an irregular change from 'Playing' is detected. Recommended value: 100 seconds; default is disabled (0)."
+        }
       }
     },
     "error": {

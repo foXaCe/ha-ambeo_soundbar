@@ -1,8 +1,20 @@
 {
+  "title": "Ambeo Soundbar",
   "config": {
     "step": {
       "user": {
         "title": "Se connecter à la barre de son Ambeo",
+        "description": "Configurez votre barre de son Ambeo",
+        "data": {
+          "host": "Hôte"
+        },
+        "data_description": {
+          "host": "Nom d'hôte ou adresse IP de la barre de son Ambeo (ex. ambeo.local ou 192.168.1.x)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurer la barre de son Ambeo",
+        "description": "Modifiez la configuration de votre barre de son Ambeo",
         "data": {
           "host": "Hôte"
         },
@@ -12,7 +24,9 @@
       }
     },
     "error": {
-      "cannot_connect": "Échec de la connexion à la barre de son Ambeo. Veuillez vérifier l'hôte et vous assurer que la barre de son est allumée."
+      "cannot_connect": "Échec de la connexion à la barre de son Ambeo. Veuillez vérifier l'hôte et vous assurer que la barre de son est allumée.",
+      "unknown": "Erreur inattendue",
+      "wrong_device": "Mauvais appareil - le numéro de série ne correspond pas"
     },
     "abort": {
       "already_configured": "L'appareil est déjà configuré"
@@ -22,19 +36,99 @@
     "step": {
       "init": {
         "title": "Paramètres de la barre de son Ambeo",
+        "description": "Configurez les options de votre barre de son Ambeo",
         "data": {
           "host": "Hôte",
-          "debounce_cooldown": "⚠️ Expérimental: Délai avant passage à l'état inactif"
+          "debounce_cooldown": "Délai de stabilisation (expérimental)"
         },
         "data_description": {
           "host": "Nom d'hôte ou adresse IP de la barre de son Ambeo (ex. ambeo.local ou 192.168.1.x)",
-          "debounce_cooldown": "Si vous rencontrez des comportements inhabituels des états du lecteur changeant sans arret entre 'Playing' et 'Idle', vous pouvez envisager d'utiliser ce réglage. \nDéfinit un délai (en secondes) utilisé avant de passer à l'état 'Idle' lorsqu'un changement irrégulier depuis 'Playing' est détecté. \nValeur recommandée : 100 secondes ; par défaut, désactivé (0)."
+          "debounce_cooldown": "Si vous rencontrez des comportements inhabituels des états du lecteur changeant sans arrêt entre 'Lecture' et 'Inactif', vous pouvez envisager d'utiliser ce réglage. Définit un délai (en secondes) utilisé avant de passer à l'état 'Inactif' lorsqu'un changement irrégulier depuis 'Lecture' est détecté. Valeur recommandée : 100 secondes ; par défaut, désactivé (0)."
         }
       }
     },
     "error": {
       "cannot_connect": "Échec de la connexion à la barre de son Ambeo. Veuillez vérifier l'hôte et vous assurer que la barre de son est allumée.",
-      "experimental_feature_activated": "Fonctionnalité expérimentale activée. Veuillez signaler tout problème rencontré."
+      "wrong_device": "Mauvais appareil - le numéro de série ne correspond pas"
+    }
+  },
+  "entity": {
+    "media_player": {
+      "player": {
+        "name": "Lecteur"
+      }
+    },
+    "switch": {
+      "subwoofer": {
+        "name": "Caisson de basses"
+      },
+      "voice_enhancement": {
+        "name": "Amélioration de la voix"
+      },
+      "sound_feedback": {
+        "name": "Retour sonore"
+      },
+      "ambeo_mode": {
+        "name": "Mode Ambeo"
+      },
+      "night_mode": {
+        "name": "Mode nuit"
+      },
+      "bluetooth_pairing": {
+        "name": "Appairage Bluetooth"
+      }
+    },
+    "light": {
+      "led_bar": {
+        "name": "Barre LED"
+      },
+      "codec_led": {
+        "name": "LED codec"
+      },
+      "ambeo_max_logo": {
+        "name": "Logo Ambeo Max"
+      },
+      "ambeo_max_display": {
+        "name": "Affichage Ambeo Max"
+      },
+      "ambeo_logo": {
+        "name": "Logo Ambeo"
+      }
+    },
+    "number": {
+      "subwoofer_volume": {
+        "name": "Volume du caisson de basses"
+      },
+      "voice_enhancement_level": {
+        "name": "Niveau d'amélioration de la voix"
+      },
+      "center_speaker_level": {
+        "name": "Niveau de l'enceinte centrale"
+      },
+      "side_firing_level": {
+        "name": "Niveau des enceintes latérales"
+      },
+      "up_firing_level": {
+        "name": "Niveau des enceintes orientées vers le haut"
+      }
+    },
+    "button": {
+      "reboot": {
+        "name": "Redémarrer"
+      },
+      "reset_expert_settings": {
+        "name": "Réinitialiser les réglages experts"
+      }
+    },
+    "binary_sensor": {
+      "eco_mode": {
+        "name": "Mode éco"
+      }
+    },
+    "select": {
+      "audio_preset": {
+        "name": "Préréglage audio"
+      }
     }
   }
 }
