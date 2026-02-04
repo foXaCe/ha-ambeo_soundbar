@@ -9,13 +9,18 @@
         "data_description": {
           "host": "Nom d'hôte ou adresse IP de la barre de son Ambeo (ex. ambeo.local ou 192.168.1.x)"
         }
+      },
+      "discovery_confirm": {
+        "title": "Barre de son Ambeo découverte",
+        "description": "Une barre de son Ambeo ({name}) a été découverte sur votre réseau. Voulez-vous l'ajouter à Home Assistant ?"
       }
     },
     "error": {
       "cannot_connect": "Échec de la connexion à la barre de son Ambeo. Veuillez vérifier l'hôte et vous assurer que la barre de son est allumée."
     },
     "abort": {
-      "already_configured": "L'appareil est déjà configuré"
+      "already_configured": "L'appareil est déjà configuré",
+      "cannot_connect": "Impossible de se connecter à l'appareil découvert"
     }
   },
   "options": {
@@ -35,6 +40,51 @@
     "error": {
       "cannot_connect": "Échec de la connexion à la barre de son Ambeo. Veuillez vérifier l'hôte et vous assurer que la barre de son est allumée.",
       "experimental_feature_activated": "Fonctionnalité expérimentale activée. Veuillez signaler tout problème rencontré."
+    }
+  },
+  "entity": {
+    "select": {
+      "audio_preset": {
+        "name": "Preset audio"
+      }
+    }
+  },
+  "services": {
+    "set_expert_audio_levels": {
+      "name": "Configurer les niveaux audio experts",
+      "description": "Configure les niveaux audio avancés (amélioration vocale, haut-parleurs central, latéraux, hauteur). Disponible uniquement sur AMBEO Soundbar Max.",
+      "fields": {
+        "voice_enhancement_level": {
+          "name": "Niveau d'amélioration vocale",
+          "description": "Niveau d'amélioration vocale (-6 à 6)"
+        },
+        "center_speaker_level": {
+          "name": "Niveau haut-parleur central",
+          "description": "Niveau du haut-parleur central (-6 à 6)"
+        },
+        "side_firing_level": {
+          "name": "Niveau haut-parleurs latéraux",
+          "description": "Niveau des haut-parleurs latéraux (-6 à 6)"
+        },
+        "up_firing_level": {
+          "name": "Niveau haut-parleurs hauteur",
+          "description": "Niveau des haut-parleurs de hauteur (-6 à 6)"
+        }
+      }
+    },
+    "reset_expert_settings": {
+      "name": "Réinitialiser les paramètres audio experts",
+      "description": "Réinitialiser tous les paramètres audio experts aux valeurs d'usine. Disponible uniquement sur AMBEO Soundbar Max."
+    },
+    "set_eq_preset": {
+      "name": "Définir le preset d'égaliseur",
+      "description": "Appliquer un preset d'égaliseur prédéfini pour différents types de contenu.",
+      "fields": {
+        "preset": {
+          "name": "Preset",
+          "description": "Sélectionner un preset audio (Neutral, Movies, Sport, News, Music)"
+        }
+      }
     }
   }
 }
