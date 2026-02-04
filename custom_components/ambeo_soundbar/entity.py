@@ -1,13 +1,13 @@
 import logging
 
-from homeassistant.components.light import LightEntity, ColorMode
-from homeassistant.components.switch import SwitchEntity
+from homeassistant.components.light import ColorMode, LightEntity
 from homeassistant.components.number import NumberEntity
-from homeassistant.util.color import value_to_brightness
+from homeassistant.components.switch import SwitchEntity
 from homeassistant.helpers.entity import Entity
+from homeassistant.util.color import value_to_brightness
 
-from .const import DOMAIN
 from .api.impl.generic_api import AmbeoApi
+from .const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,8 +19,9 @@ class AmbeoBaseEntity(Entity):
         """Initialize the base entity."""
         self._name = f"{device.name} {name_suffix}"
         self.api = api
-        self._unique_id = f"{device.serial}_{
-            unique_id_suffix.lower().replace(' ', '_')}"
+        self._unique_id = (
+            f"{device.serial}_{unique_id_suffix.lower().replace(' ', '_')}"
+        )
         self.ambeo_device = device
 
     @property
