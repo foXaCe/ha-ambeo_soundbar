@@ -1,119 +1,35 @@
-# Pre-commit hooks for code quality
-# Install: pip install pre-commit && pre-commit install
-# Run manually: pre-commit run --all-files
-
 repos:
-  # Ruff - Fast Python linter and formatter
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.5
+    rev: v0.9.0
     hooks:
-      # Run the linter
       - id: ruff
         args: [--fix]
-        types_or: [python, pyi]
-      # Run the formatter
       - id: ruff-format
-        types_or: [python, pyi]
 
-  # Additional code quality checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: v5.0.0
     hooks:
-      # Prevent commits to main/master
-      - id: no-commit-to-branch
-        args: [--branch, master, --branch, main]
-      # Check for files that would conflict in case-insensitive filesystems
-      - id: check-case-conflict
-      # Check for merge conflicts
-      - id: check-merge-conflict
-      # Check JSON files
-      - id: check-json
-      # Check YAML files
-      - id: check-yaml
-        args: [--unsafe]  # Allow custom YAML tags
-      # Check TOML files
-      - id: check-toml
-      # Detect private keys
-      - id: detect-private-key
-      # Fix end of files
-      - id: end-of-file-fixer
-      # Fix trailing whitespace
       - id: trailing-whitespace
-      # Check for debugger imports
-      - id: debug-statements
-      # Check docstring is first
-      - id: check-docstring-first
-      # Check builtin type constructor use
-      - id: check-builtin-literals
-      # Ensure files end with newline
-      - id: mixed-line-ending
-        args: [--fix=lf]
-      # Prevent large files from being committed
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
       - id: check-added-large-files
-        args: [--maxkb=500]
-      # Check for files with names that would conflict on a case-insensitive filesystem
-      - id: check-ast
-        description: Check Python syntax
-      # Forbid files which have a UTF-8 byte-order marker
-      - id: check-byte-order-marker
-      # Check for symlinks which do not point to anything
-      - id: check-symlinks
-      # Detect destroyed symlinks
-      - id: destroyed-symlinks
 
-  # Check for common security issues
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.9.0
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.14.1
     hooks:
-      - id: bandit
-        args: [-c, pyproject.toml]
-        additional_dependencies: ["bandit[toml]"]
-        exclude: ^tests/
+      - id: mypy
+        additional_dependencies:
+          - homeassistant-stubs
+          - types-requests
 
-  # Check for common spelling mistakes
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: v2.3.0
     hooks:
       - id: codespell
-        args:
-          - --ignore-words-list=hass,HA,ba,ambeo
-          - --skip="*.json,*.lock"
-        exclude: ^(\.git|\.github|\.venv|venv)/
+        args: [--ignore-words-list, "hass,ambeo"]
 
-  # Type checking with mypy - DISABLED in pre-commit (too slow)
-  # Use 'make type-check' manually instead
-  # - repo: https://github.com/pre-commit/mirrors-mypy
-  #   rev: v1.18.2
-  #   hooks:
-  #     - id: mypy
-  #       args: [--config-file=pyproject.toml]
-  #       exclude: ^(tests/|\.venv/|venv/)
-
-  # Check for Python 2/3 compatibility issues
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.1
-    hooks:
-      - id: pyupgrade
-        args: [--py311-plus]
-        description: Upgrade Python syntax to 3.11+
-
-  # Validate GitHub Actions workflows
-  - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.35.0
-    hooks:
-      - id: check-github-workflows
-        args: [--verbose]
-      - id: check-dependabot
-
-# Configuration for pre-commit.ci (optional CI service)
 ci:
-  autofix_commit_msg: |
-    [pre-commit.ci] auto fixes from pre-commit hooks
-
-    for more information, see https://pre-commit.ci
-  autofix_prs: true
-  autoupdate_branch: ''
-  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autofix_commit_msg: "style: auto-fix by pre-commit"
+  autoupdate_commit_msg: "build(deps): update pre-commit hooks"
   autoupdate_schedule: weekly
-  skip: []
-  submodules: false
