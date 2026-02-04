@@ -27,7 +27,7 @@ from .api.impl.generic_api import AmbeoApi
 @dataclass(frozen=True, kw_only=True)
 class AmbeoButtonEntityDescription(ButtonEntityDescription):
     """Button entity description for Ambeo Soundbar.
-    
+
     Extends the standard ButtonEntityDescription with:
     - press_fn: Async function to execute when button is pressed
     - capability: Required capability for this entity
@@ -63,7 +63,7 @@ BUTTON_DESCRIPTIONS: tuple[AmbeoButtonEntityDescription, ...] = (
 
 class AmbeoButton(AmbeoBaseEntity, ButtonEntity):
     """Button entity for Ambeo Soundbar.
-    
+
     Uses EntityDescription pattern for clean, maintainable code.
     """
 
@@ -75,7 +75,7 @@ class AmbeoButton(AmbeoBaseEntity, ButtonEntity):
         description: AmbeoButtonEntityDescription,
     ) -> None:
         """Initialize the button.
-        
+
         Args:
             config_entry: The config entry for this entity
             description: Entity description containing configuration
@@ -86,12 +86,14 @@ class AmbeoButton(AmbeoBaseEntity, ButtonEntity):
             description.key,
         )
         self.entity_description = description
-        self._attr_unique_id = f"{config_entry.runtime_data.device.serial}_{description.key}"
+        self._attr_unique_id = (
+            f"{config_entry.runtime_data.device.serial}_{description.key}"
+        )
         self.api = config_entry.runtime_data.api
 
     async def async_press(self) -> None:
         """Handle the button press.
-        
+
         Calls the press_fn from entity_description to execute
         the appropriate action on the device.
         """
@@ -104,7 +106,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up button entities.
-    
+
     Creates entities based on device capabilities. Each entity is
     only created if the device supports the required capability.
     """

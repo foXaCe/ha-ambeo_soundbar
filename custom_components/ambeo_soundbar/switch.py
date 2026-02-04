@@ -27,7 +27,7 @@ from .api.impl.generic_api import AmbeoApi
 @dataclass(frozen=True, kw_only=True)
 class AmbeoSwitchEntityDescription(SwitchEntityDescription):
     """Switch entity description for Ambeo Soundbar.
-    
+
     Extends the standard SwitchEntityDescription with:
     - value_fn: Function to extract current state from coordinator data
     - turn_on_fn: Async function to turn the switch on
@@ -117,7 +117,7 @@ SWITCH_DESCRIPTIONS: tuple[AmbeoSwitchEntityDescription, ...] = (
 
 class AmbeoSwitch(AmbeoBaseEntity, SwitchEntity):
     """Switch entity for Ambeo Soundbar.
-    
+
     Uses EntityDescription pattern for clean, maintainable code.
     All state changes automatically trigger coordinator refresh.
     """
@@ -130,7 +130,7 @@ class AmbeoSwitch(AmbeoBaseEntity, SwitchEntity):
         description: AmbeoSwitchEntityDescription,
     ) -> None:
         """Initialize the switch.
-        
+
         Args:
             config_entry: The config entry for this entity
             description: Entity description containing configuration
@@ -141,13 +141,15 @@ class AmbeoSwitch(AmbeoBaseEntity, SwitchEntity):
             description.key,
         )
         self.entity_description = description
-        self._attr_unique_id = f"{config_entry.runtime_data.device.serial}_{description.key}"
+        self._attr_unique_id = (
+            f"{config_entry.runtime_data.device.serial}_{description.key}"
+        )
         self.api = config_entry.runtime_data.api
 
     @property
     def is_on(self) -> bool | None:
         """Return true if switch is on.
-        
+
         Uses the value_fn from entity_description to extract
         the current state from coordinator data.
         """
@@ -157,7 +159,7 @@ class AmbeoSwitch(AmbeoBaseEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn the switch on.
-        
+
         Calls the turn_on_fn from entity_description and
         refreshes coordinator data to update UI.
         """
@@ -166,7 +168,7 @@ class AmbeoSwitch(AmbeoBaseEntity, SwitchEntity):
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the switch off.
-        
+
         Calls the turn_off_fn from entity_description and
         refreshes coordinator data to update UI.
         """
@@ -180,7 +182,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up switch entities.
-    
+
     Creates entities based on device capabilities. Each entity is
     only created if the device supports the required capability.
     For subwoofer, also checks if a subwoofer is actually connected.

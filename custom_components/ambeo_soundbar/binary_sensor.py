@@ -22,7 +22,7 @@ from .entity import AmbeoBaseEntity
 @dataclass(frozen=True, kw_only=True)
 class AmbeoBinarySensorEntityDescription(BinarySensorEntityDescription):
     """Binary sensor entity description for Ambeo Soundbar.
-    
+
     Extends the standard BinarySensorEntityDescription with:
     - value_fn: Function to extract value from coordinator data
     - capability: Required capability for this entity
@@ -48,7 +48,7 @@ BINARY_SENSOR_DESCRIPTIONS: tuple[AmbeoBinarySensorEntityDescription, ...] = (
 
 class AmbeoBinarySensor(AmbeoBaseEntity, BinarySensorEntity):
     """Binary sensor entity for Ambeo Soundbar.
-    
+
     Uses EntityDescription pattern for clean, maintainable code.
     """
 
@@ -60,7 +60,7 @@ class AmbeoBinarySensor(AmbeoBaseEntity, BinarySensorEntity):
         description: AmbeoBinarySensorEntityDescription,
     ) -> None:
         """Initialize the binary sensor.
-        
+
         Args:
             config_entry: The config entry for this entity
             description: Entity description containing configuration
@@ -71,12 +71,14 @@ class AmbeoBinarySensor(AmbeoBaseEntity, BinarySensorEntity):
             description.key,
         )
         self.entity_description = description
-        self._attr_unique_id = f"{config_entry.runtime_data.device.serial}_{description.key}"
+        self._attr_unique_id = (
+            f"{config_entry.runtime_data.device.serial}_{description.key}"
+        )
 
     @property
     def is_on(self) -> bool | None:
         """Return true if the binary sensor is on.
-        
+
         Uses the value_fn from entity_description to extract
         the current state from coordinator data.
         """
@@ -87,7 +89,7 @@ class AmbeoBinarySensor(AmbeoBaseEntity, BinarySensorEntity):
     @property
     def available(self) -> bool:
         """Return if entity is available.
-        
+
         Entity is available if:
         - Coordinator has successfully updated
         - Data exists and contains valid value
@@ -107,7 +109,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up binary sensor entities.
-    
+
     Creates entities based on device capabilities and available data.
     Only creates entities for which the device has the required capability.
     """

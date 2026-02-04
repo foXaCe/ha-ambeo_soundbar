@@ -16,7 +16,7 @@ import logging
 import time
 from collections import deque
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import TYPE_CHECKING, Any, TypeVar
 
 import aiohttp
@@ -342,7 +342,7 @@ class AmbeoApiClient:
                 # Don't retry Ambeo errors (they're already processed)
                 raise
 
-            except asyncio.TimeoutError as err:
+            except asyncio.TimeoutError:
                 last_exception = AmbeoTimeoutError(
                     f"Request timeout after {self._timeout.total}s",
                     url=url,

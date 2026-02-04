@@ -148,7 +148,9 @@ class AmbeoMaxLogo(AmbeoBaseLight):
         if logo_data:
             brightness_val = logo_data.get("brightness")
             if brightness_val is not None:
-                return value_to_brightness(BRIGHTNESS_SCALE_AMBEO_MAX_LOGO, brightness_val)
+                return value_to_brightness(
+                    BRIGHTNESS_SCALE_AMBEO_MAX_LOGO, brightness_val
+                )
         return None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
