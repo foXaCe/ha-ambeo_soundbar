@@ -24,6 +24,8 @@ from .entity import AmbeoBaseLight
 class LEDBar(AmbeoBaseLight):
     """Light entity for LED Bar."""
 
+    __slots__ = ("api",)
+
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the LED Bar light."""
         super().__init__(
@@ -73,6 +75,8 @@ class LEDBar(AmbeoBaseLight):
 class CodecLED(AmbeoBaseLight):
     """Light entity for Codec LED."""
 
+    __slots__ = ("api",)
+
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the Codec LED light."""
         super().__init__(
@@ -111,6 +115,8 @@ class CodecLED(AmbeoBaseLight):
 
 class AmbeoMaxLogo(AmbeoBaseLight):
     """Light entity for Ambeo Max Logo."""
+
+    __slots__ = ("api",)
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the Ambeo Max Logo light."""
@@ -167,6 +173,8 @@ class AmbeoMaxLogo(AmbeoBaseLight):
 class AmbeoMaxDisplay(AmbeoBaseLight):
     """Light entity for Ambeo Max Display."""
 
+    __slots__ = ("api",)
+
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the Ambeo Max Display light."""
         super().__init__(
@@ -207,6 +215,8 @@ class AmbeoMaxDisplay(AmbeoBaseLight):
 
 class AmbeoLogo(AmbeoBaseLight):
     """Light entity for Ambeo Logo."""
+
+    __slots__ = ("api",)
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the Ambeo Logo light."""

@@ -17,6 +17,7 @@ class SubWooferVolume(AmbeoBaseNumber):
     _attr_native_step = 1
     _attr_device_class = NumberDeviceClass.SOUND_PRESSURE
     _attr_native_unit_of_measurement = UnitOfSoundPressure.DECIBEL
+    __slots__ = ("api",)
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the subwoofer volume."""
@@ -61,6 +62,7 @@ class VoiceEnhancementLevel(AmbeoBaseNumber):
     _attr_native_min_value = 0
     _attr_native_max_value = 3
     _attr_native_unit_of_measurement = "Level"
+    __slots__ = ("api",)
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the voice enhancement level."""
@@ -97,6 +99,8 @@ class CenterSpeakerLevel(AmbeoBaseNumber):
     _attr_device_class = NumberDeviceClass.SOUND_PRESSURE
     _attr_native_unit_of_measurement = UnitOfSoundPressure.DECIBEL
     _attr_entity_category = EntityCategory.CONFIG
+    _attr_entity_registry_enabled_default = False
+    __slots__ = ("api",)
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the center speaker level."""
@@ -138,6 +142,8 @@ class SideFiringLevel(AmbeoBaseNumber):
     _attr_device_class = NumberDeviceClass.SOUND_PRESSURE
     _attr_native_unit_of_measurement = UnitOfSoundPressure.DECIBEL
     _attr_entity_category = EntityCategory.CONFIG
+    _attr_entity_registry_enabled_default = False
+    __slots__ = ("api",)
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the side firing speakers level."""
@@ -178,6 +184,8 @@ class UpFiringLevel(AmbeoBaseNumber):
     _attr_device_class = NumberDeviceClass.SOUND_PRESSURE
     _attr_native_unit_of_measurement = UnitOfSoundPressure.DECIBEL
     _attr_entity_category = EntityCategory.CONFIG
+    _attr_entity_registry_enabled_default = False
+    __slots__ = ("api",)
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the up firing speakers level."""

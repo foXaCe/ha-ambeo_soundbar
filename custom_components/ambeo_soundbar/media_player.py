@@ -45,6 +45,16 @@ class AmbeoMediaPlayer(AmbeoBaseEntity, MediaPlayerEntity):
         | MediaPlayerEntityFeature.NEXT_TRACK
         | MediaPlayerEntityFeature.PREVIOUS_TRACK
     )
+    __slots__ = (
+        "api",
+        "_sources",
+        "_presets",
+        "_max_volume",
+        "_debounce_cooldown",
+        "_debounce_task",
+        "_debounce_start",
+        "_update_lock",
+    )
 
     def __init__(
         self,

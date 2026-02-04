@@ -15,6 +15,7 @@ class AmbeoReboot(AmbeoBaseButton):
 
     _attr_entity_category = EntityCategory.CONFIG
     _attr_device_class = ButtonDeviceClass.RESTART
+    _attr_entity_registry_enabled_default = False
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the reboot button."""
@@ -35,6 +36,7 @@ class ResetExpertSettings(AmbeoBaseButton):
 
     _attr_entity_category = EntityCategory.CONFIG
     _attr_device_class = ButtonDeviceClass.RESTART
+    _attr_entity_registry_enabled_default = False
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the reset expert settings button."""

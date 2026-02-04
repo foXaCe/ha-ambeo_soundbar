@@ -13,6 +13,8 @@ from .util import find_id_by_title, find_title_by_id
 class AmbeoAudioPreset(AmbeoBaseEntity, SelectEntity):
     """Select entity for audio presets (sound modes)."""
 
+    __slots__ = ("api", "_presets")
+
     def __init__(
         self,
         config_entry: AmbeoConfigEntry,

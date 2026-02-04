@@ -12,6 +12,8 @@ from .entity import AmbeoBaseEntity
 class EcoModeSensor(AmbeoBaseEntity, BinarySensorEntity):
     """Binary sensor for Eco Mode status."""
 
+    _attr_entity_registry_enabled_default = False
+
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the Eco Mode sensor."""
         super().__init__(

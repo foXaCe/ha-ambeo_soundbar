@@ -4,14 +4,12 @@ from __future__ import annotations
 
 import logging
 
-
 from homeassistant.components.button import ButtonEntity
 from homeassistant.components.light import ColorMode, LightEntity
 from homeassistant.components.number import NumberEntity
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-
 
 from .const import DOMAIN, AmbeoDevice
 from .coordinator import AmbeoDataUpdateCoordinator
@@ -23,6 +21,7 @@ class AmbeoBaseEntity(CoordinatorEntity[AmbeoDataUpdateCoordinator]):
     """Base class for Ambeo entities."""
 
     _attr_has_entity_name = True
+    __slots__ = ("_device",)
 
     def __init__(
         self,
@@ -55,6 +54,7 @@ class AmbeoBaseLight(AmbeoBaseEntity, LightEntity):
 
     _attr_supported_color_modes = {ColorMode.BRIGHTNESS}
     _attr_color_mode = ColorMode.BRIGHTNESS
+    __slots__ = ("_brightness_scale",)
 
     def __init__(
         self,
@@ -81,6 +81,8 @@ class AmbeoBaseLight(AmbeoBaseEntity, LightEntity):
 class AmbeoBaseSwitch(AmbeoBaseEntity, SwitchEntity):
     """Base class for Ambeo switch entities."""
 
+    __slots__ = ()
+
     def __init__(
         self,
         coordinator: AmbeoDataUpdateCoordinator,
@@ -99,6 +101,8 @@ class AmbeoBaseSwitch(AmbeoBaseEntity, SwitchEntity):
 class AmbeoBaseNumber(AmbeoBaseEntity, NumberEntity):
     """Base class for Ambeo number entities."""
 
+    __slots__ = ()
+
     def __init__(
         self,
         coordinator: AmbeoDataUpdateCoordinator,
@@ -116,6 +120,8 @@ class AmbeoBaseNumber(AmbeoBaseEntity, NumberEntity):
 
 class AmbeoBaseButton(AmbeoBaseEntity, ButtonEntity):
     """Base class for Ambeo button entities."""
+
+    __slots__ = ()
 
     def __init__(
         self,

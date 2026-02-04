@@ -13,6 +13,8 @@ from .entity import AmbeoBaseSwitch
 class SubWooferStatus(AmbeoBaseSwitch):
     """Switch for subwoofer status."""
 
+    __slots__ = ("api",)
+
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the subwoofer switch."""
         super().__init__(
@@ -46,6 +48,8 @@ class SubWooferStatus(AmbeoBaseSwitch):
 
 class VoiceEnhancementMode(AmbeoBaseSwitch):
     """Switch for voice enhancement mode."""
+
+    __slots__ = ("api",)
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the voice enhancement switch."""
@@ -81,6 +85,8 @@ class VoiceEnhancementMode(AmbeoBaseSwitch):
 class SoundFeedback(AmbeoBaseSwitch):
     """Switch for sound feedback."""
 
+    __slots__ = ("api",)
+
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the sound feedback switch."""
         super().__init__(
@@ -111,6 +117,8 @@ class SoundFeedback(AmbeoBaseSwitch):
 
 class AmbeoMode(AmbeoBaseSwitch):
     """Switch for Ambeo mode."""
+
+    __slots__ = ("api",)
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the Ambeo mode switch."""
@@ -143,6 +151,8 @@ class AmbeoMode(AmbeoBaseSwitch):
 class NightMode(AmbeoBaseSwitch):
     """Switch for night mode."""
 
+    __slots__ = ("api",)
+
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the night mode switch."""
         super().__init__(
@@ -173,6 +183,9 @@ class NightMode(AmbeoBaseSwitch):
 
 class AmbeoBluetoothPairing(AmbeoBaseSwitch):
     """Switch for Bluetooth pairing."""
+
+    _attr_entity_registry_enabled_default = False
+    __slots__ = ("api",)
 
     def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the Bluetooth pairing switch."""
