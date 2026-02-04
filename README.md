@@ -72,17 +72,141 @@ Home Assistant integration to control your Sennheiser AMBEO soundbar directly fr
 ## 🔧 Setup
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=ambeo_soundbar)
 
+### Automatic Discovery (Recommended)
+Your AMBEO Soundbar will be automatically discovered on your network using Zeroconf/mDNS. When detected, you'll receive a notification in Home Assistant to add the device with just one click.
+
+### Manual Setup
 1. Go to the Integrations page in Home Assistant
 2. Click "Add Integration" and search for "Ambeo Soundbar"
-3. Enter your soundbar's IP address
+3. Enter your soundbar's hostname (e.g., `ambeo.local`) or IP address (e.g., `192.168.1.100`)
 4. Integration will be ready within a few seconds
 
+## 🎛️ Advanced Features
+
+### Custom Services
+
+The integration provides advanced services for fine-tuning your soundbar:
+
+#### `ambeo_soundbar.set_expert_audio_levels`
+Configure expert audio levels for AMBEO Soundbar Max:
+- **Voice Enhancement Level** (-6 to 6): Adjust dialogue clarity
+- **Center Speaker Level** (-6 to 6): Control center channel output
+- **Side Firing Level** (-6 to 6): Adjust width/surround speakers
+- **Up Firing Level** (-6 to 6): Control height/Atmos speakers
+
+```yaml
+service: ambeo_soundbar.set_expert_audio_levels
+data:
+  voice_enhancement_level: 2
+  center_speaker_level: 0
+  side_firing_level: 1
+  up_firing_level: 1
+```
+
+#### `ambeo_soundbar.set_eq_preset`
+Apply predefined equalizer presets via service:
+```yaml
+service: ambeo_soundbar.set_eq_preset
+data:
+  preset: "Movies"  # Options: Neutral, Movies, Sport, News, Music
+```
+
+#### `ambeo_soundbar.reset_expert_settings`
+Reset all expert audio settings to factory defaults (Max only):
+```yaml
+service: ambeo_soundbar.reset_expert_settings
+```
+
+### Audio Preset Selector
+
+A **Select entity** is automatically created to change audio presets directly from the UI:
+- **Entity**: `select.ambeo_soundbar_audio_preset`
+- **Available presets**: Automatically detected from your soundbar model
+  - **Max**: Neutral, Movies, Sport, News, Music
+  - **Plus/Mini**: Adaptive, Music, Movie, News, Voice (dynamically loaded)
+- Change presets with a simple dropdown in Lovelace cards or automations
+
+Example automation:
+```yaml
+automation:
+  - alias: "Movie mode at night"
+    trigger:
+      - platform: time
+        at: "20:00:00"
+    action:
+      - service: select.select_option
+        target:
+          entity_id: select.ambeo_soundbar_audio_preset
+        data:
+          option: "Movies"
+```
+
+### Direct Device Access
+
+A **configuration link** is automatically added to the device information page, allowing you to:
+- Click the device card in Home Assistant
+- Access the **"Visit Device"** link
+- Open the soundbar's web interface directly in your browser
+- Configure advanced settings, firmware updates, and more
+
+The link points to `http://[soundbar-ip]` and provides direct access to the Sennheiser web UI.
+
+### Built-in Diagnostics
+
+Access comprehensive device diagnostics from Home Assistant:
+- Settings → Devices & Services → Ambeo Soundbar → (device) → Download Diagnostics
+
+Includes:
+- Device information (model, firmware, serial)
+- Current state snapshot
+- API capabilities
+- Configuration data
+
+### Adaptive Polling
+
+The integration automatically adjusts its update frequency based on device state:
+- **Playing**: 5 seconds (real-time updates)
+- **Idle**: 30 seconds (standard monitoring)
+- **Standby**: 60 seconds (minimal network traffic)
+
+### Automatic Reconnection
+
+Built-in retry logic with exponential backoff ensures reliable connectivity:
+- Automatic reconnection on network issues
+- Smart backoff timing (1s → 2s → 4s → 8s → 10s max)
+- Graceful degradation on persistent errors
+
 ## ❓ Troubleshooting
+
+### Device Unavailable / Connection Errors
 
 If you encounter any issues:
 1. Verify that your soundbar is powered on and connected to your network
 2. Double-check that the configured IP address is correct
 3. Check Home Assistant logs for any error details
+4. Download diagnostics from the device page for detailed troubleshooting
+
+### Reducing Log Verbosity (Device Offline)
+
+When your soundbar is powered off or disconnected, Home Assistant may show detailed error logs. To reduce log verbosity, add this to your `configuration.yaml`:
+
+```yaml
+logger:
+  default: info
+  logs:
+    # Reduce integration logs to info level (hides debug details)
+    custom_components.ambeo_soundbar: info
+
+    # Hide traceback from HA Core when device is unavailable (optional)
+    homeassistant.config_entries: warning
+```
+
+After adding this configuration:
+1. Save `configuration.yaml`
+2. Restart Home Assistant
+3. You'll only see brief "device unavailable" messages instead of full tracebacks
+
+**Note**: When the device is unavailable, the integration will automatically retry connection and restore functionality once the device comes back online.
 
 
 ## 🤝 Contributing
