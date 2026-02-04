@@ -6,6 +6,7 @@ from collections.abc import Generator
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+import pytest_asyncio
 from homeassistant.const import CONF_HOST
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -17,7 +18,7 @@ from custom_components.ambeo_soundbar.const import (
 from custom_components.ambeo_soundbar.coordinator import AmbeoDataUpdateCoordinator
 
 
-@pytest.fixture
+@pytest_asyncio.fixture
 def mock_config_entry() -> MockConfigEntry:
     """Return a mock config entry."""
     return MockConfigEntry(
@@ -83,8 +84,8 @@ def mock_api() -> Generator[MagicMock, None, None]:
     yield api
 
 
-@pytest.fixture
-def mock_coordinator(
+@pytest_asyncio.fixture
+async def mock_coordinator(
     hass, mock_config_entry, mock_api, mock_device
 ) -> AmbeoDataUpdateCoordinator:
     """Return a mock coordinator."""
