@@ -14,7 +14,6 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class AmbeoApi:
-
     capabilities = []
 
     def __init__(self, ip, port, session: aiohttp.ClientSession, hass: HomeAssistant):
@@ -48,13 +47,16 @@ class AmbeoApi:
 
         except aiohttp.ClientError as e:
             raise AmbeoConnectionError(
-                f"Client error during HTTP request for url: {full_url}. Exception: {e}")
+                f"Client error during HTTP request for url: {full_url}. Exception: {e}"
+            )
         except asyncio.TimeoutError:
             raise AmbeoConnectionError(
-                f"Timeout error while fetching data from url: {full_url}")
+                f"Timeout error while fetching data from url: {full_url}"
+            )
         except Exception as e:
             raise AmbeoConnectionError(
-                f"Unexpected exception with url: {full_url}. Exception: {e}")
+                f"Unexpected exception with url: {full_url}. Exception: {e}"
+            )
 
     def extract_data(self, json_data, key_path):
         """Extract data from JSON using a specified key path."""
@@ -73,7 +75,9 @@ class AmbeoApi:
         """Generate a nocache parameter to prevent caching."""
         return int(time.time() * 1000)
 
-    async def execute_request(self, function, path, role=None, value=None, from_idx=None, to_idx=None):
+    async def execute_request(
+        self, function, path, role=None, value=None, from_idx=None, to_idx=None
+    ):
         """Execute a request with the specified parameters."""
         url = f"{function}?path={path}"
         if role:
@@ -96,7 +100,9 @@ class AmbeoApi:
 
     async def set_value(self, path, data_type, value):
         """Set a value of a specified type at a specified path."""
-        await self.execute_request("setData", path, "value", json.dumps({"type": data_type, data_type: value}))
+        await self.execute_request(
+            "setData", path, "value", json.dumps({"type": data_type, data_type: value})
+        )
 
     # Specific functions for interacting with the device features like volume, mute, serial, version, model, night mode, voice enhancement, Ambeo mode, name, Ambeo logo brightness and state, LED bar brightness, codec LED brightness, sound feedback, sources, presets, and player controls follow here, each implemented with appropriate get and set methods as per the device's API.
 
@@ -120,13 +126,15 @@ class AmbeoApi:
     async def get_name(self):
         return await self.get_value("systemmanager:/deviceName", "string_")
 
-     # SERIAL
+    # SERIAL
     async def get_serial(self):
         return await self.get_value("settings:/system/serialNumber", "string_")
 
     # VERSION
     async def get_version(self):
-        return await self.get_value("ui:settings/firmwareUpdate/currentVersion", "string_")
+        return await self.get_value(
+            "ui:settings/firmwareUpdate/currentVersion", "string_"
+        )
 
     # MODEL
     async def get_model(self):
@@ -146,7 +154,7 @@ class AmbeoApi:
     async def set_mute(self, mute):
         await self.set_value("settings:/mediaPlayer/mute", "bool_", mute)
 
-   # NIGHT MODE
+    # NIGHT MODE
     async def get_night_mode(self):
         pass
 
@@ -247,16 +255,36 @@ class AmbeoApi:
         pass
 
     async def play(self):
-        await self.execute_request("setData", "popcorn:multiPurposeButtonActivate", "activate", json.dumps({"type": "bool_", "bool_": True}))
+        await self.execute_request(
+            "setData",
+            "popcorn:multiPurposeButtonActivate",
+            "activate",
+            json.dumps({"type": "bool_", "bool_": True}),
+        )
 
     async def pause(self):
-        await self.execute_request("setData", "popcorn:multiPurposeButtonActivate", "activate", json.dumps({"type": "bool_", "bool_": True}))
+        await self.execute_request(
+            "setData",
+            "popcorn:multiPurposeButtonActivate",
+            "activate",
+            json.dumps({"type": "bool_", "bool_": True}),
+        )
 
     async def next(self):
-        await self.execute_request("setData", "player:player/control", "activate", json.dumps({"control": "next"}))
+        await self.execute_request(
+            "setData",
+            "player:player/control",
+            "activate",
+            json.dumps({"control": "next"}),
+        )
 
     async def previous(self):
-        await self.execute_request("setData", "player:player/control", "activate", json.dumps({"control": "previous"}))
+        await self.execute_request(
+            "setData",
+            "player:player/control",
+            "activate",
+            json.dumps({"control": "previous"}),
+        )
 
     async def player_data(self):
         data = await self.execute_request("getData", "player:player/data/value", "@all")
@@ -274,7 +302,12 @@ class AmbeoApi:
 
     # Reboot
     async def reboot(self):
-        await self.execute_request("setData", "ui:/settings/system/restart", "activate", json.dumps({"type": "bool_", "bool_": True}))
+        await self.execute_request(
+            "setData",
+            "ui:/settings/system/restart",
+            "activate",
+            json.dumps({"type": "bool_", "bool_": True}),
+        )
 
     async def get_state(self):
         power_target = await self.get_value("powermanager:target", "powerTarget")

@@ -1,105 +1,131 @@
+"""Base entity class for Ambeo Soundbar."""
+
+from __future__ import annotations
+
 import logging
 
-from homeassistant.components.light import LightEntity, ColorMode
-from homeassistant.components.switch import SwitchEntity
-from homeassistant.components.number import NumberEntity
-from homeassistant.util.color import value_to_brightness
-from homeassistant.helpers.entity import Entity
 
-from .const import DOMAIN
-from .api.impl.generic_api import AmbeoApi
+from homeassistant.components.button import ButtonEntity
+from homeassistant.components.light import ColorMode, LightEntity
+from homeassistant.components.number import NumberEntity
+from homeassistant.components.switch import SwitchEntity
+from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
+
+from .const import DOMAIN, AmbeoDevice
+from .coordinator import AmbeoDataUpdateCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class AmbeoBaseEntity(Entity):
+class AmbeoBaseEntity(CoordinatorEntity[AmbeoDataUpdateCoordinator]):
     """Base class for Ambeo entities."""
 
-    def __init__(self, device, api: AmbeoApi, name_suffix, unique_id_suffix):
+    _attr_has_entity_name = True
+
+    def __init__(
+        self,
+        coordinator: AmbeoDataUpdateCoordinator,
+        device: AmbeoDevice,
+        unique_id_suffix: str,
+    ) -> None:
         """Initialize the base entity."""
-        self._name = f"{device.name} {name_suffix}"
-        self.api = api
-        self._unique_id = f"{device.serial}_{
-            unique_id_suffix.lower().replace(' ', '_')}"
-        self.ambeo_device = device
+        super().__init__(coordinator)
+        self._device = device
+        self._attr_unique_id = (
+            f"{device.serial}_{unique_id_suffix.lower().replace(' ', '_')}"
+        )
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, device.serial)},
+            name=device.name,
+            manufacturer=device.manufacturer,
+            model=device.model,
+            sw_version=device.version,
+        )
 
     @property
-    def device_info(self):
-        """Return device information."""
-        return {
-            "identifiers": {(DOMAIN, self.ambeo_device.serial)},
-        }
-
-    @property
-    def unique_id(self):
-        """Return the unique identifier for the entity."""
-        return self._unique_id
-
-    @property
-    def name(self):
-        """Return the name of the entity."""
-        return self._name
+    def available(self) -> bool:
+        """Return if entity is available."""
+        return self.coordinator.last_update_success
 
 
-class BaseLight(AmbeoBaseEntity, LightEntity):
-    def __init__(self, device, api, name_suffix, unique_id_suffix, brightness_scale):
-        """Initialize the light entity with specific brightness attribute."""
-        super().__init__(device, api, name_suffix, unique_id_suffix)
-        self._brightness = 0  # Specific to light type entities
+class AmbeoBaseLight(AmbeoBaseEntity, LightEntity):
+    """Base class for Ambeo light entities."""
+
+    _attr_supported_color_modes = {ColorMode.BRIGHTNESS}
+    _attr_color_mode = ColorMode.BRIGHTNESS
+
+    def __init__(
+        self,
+        coordinator: AmbeoDataUpdateCoordinator,
+        device: AmbeoDevice,
+        unique_id_suffix: str,
+        brightness_scale: tuple[int, int],
+    ) -> None:
+        """Initialize the light entity."""
+        super().__init__(coordinator, device, unique_id_suffix)
         self._brightness_scale = brightness_scale
 
     @property
-    def is_on(self):
-        """Check if the light is on based on brightness."""
-        return self._brightness > 0
+    def is_on(self) -> bool | None:
+        """Return true if light is on."""
+        return None
 
     @property
-    def available(self):
-        return self._brightness is not None
-
-    @property
-    def supported_color_modes(self):
-        """Supported color modes."""
-        return {ColorMode.BRIGHTNESS}
-
-    @property
-    def color_mode(self):
-        """Current color mode."""
-        return ColorMode.BRIGHTNESS
-
-    @property
-    def brightness(self):
+    def brightness(self) -> int | None:
         """Return the brightness of the light."""
-        return value_to_brightness(self._brightness_scale, self._brightness)
+        return None
 
 
 class AmbeoBaseSwitch(AmbeoBaseEntity, SwitchEntity):
-    """The class remains largely unchanged."""
+    """Base class for Ambeo switch entities."""
 
-    def __init__(self, device, api, feature_name):
+    def __init__(
+        self,
+        coordinator: AmbeoDataUpdateCoordinator,
+        device: AmbeoDevice,
+        unique_id_suffix: str,
+    ) -> None:
         """Initialize the switch entity."""
-        super().__init__(device, api, feature_name, feature_name)
-        self._is_on = True
+        super().__init__(coordinator, device, unique_id_suffix)
 
     @property
-    def is_on(self):
-        """Determine if the switch is currently on or off."""
-        return self._is_on
-
-    @property
-    def available(self):
-        return self._is_on is not None
+    def is_on(self) -> bool | None:
+        """Return true if switch is on."""
+        return None
 
 
 class AmbeoBaseNumber(AmbeoBaseEntity, NumberEntity):
-    """Generic ambeo number."""
+    """Base class for Ambeo number entities."""
 
-    def __init__(self, device, api, feature_name):
+    def __init__(
+        self,
+        coordinator: AmbeoDataUpdateCoordinator,
+        device: AmbeoDevice,
+        unique_id_suffix: str,
+    ) -> None:
         """Initialize the number entity."""
-        super().__init__(device, api, feature_name, feature_name)
-        self._current_value = None
+        super().__init__(coordinator, device, unique_id_suffix)
 
     @property
-    def native_value(self):
-        """Get current value"""
-        return self._current_value
+    def native_value(self) -> float | None:
+        """Return the current value."""
+        return None
+
+
+class AmbeoBaseButton(AmbeoBaseEntity, ButtonEntity):
+    """Base class for Ambeo button entities."""
+
+    def __init__(
+        self,
+        coordinator: AmbeoDataUpdateCoordinator,
+        device: AmbeoDevice,
+        unique_id_suffix: str,
+    ) -> None:
+        """Initialize the button entity."""
+        super().__init__(coordinator, device, unique_id_suffix)
+
+    async def async_press(self) -> None:
+        """Handle the button press."""
+        raise NotImplementedError

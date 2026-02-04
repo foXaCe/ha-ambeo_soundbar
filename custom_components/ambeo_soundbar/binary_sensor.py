@@ -1,53 +1,53 @@
-import logging
+"""Binary sensor platform for Ambeo Soundbar."""
 
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import EntityCategory
+from __future__ import annotations
+
 from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.core import HomeAssistant
 
-from .const import DOMAIN, Capability
+from .const import AmbeoConfigEntry, Capability
 from .entity import AmbeoBaseEntity
-from .api.impl.generic_api import AmbeoApi
-
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class EcoModeSensor(AmbeoBaseEntity, BinarySensorEntity):
-    def __init__(self, device, api):
+    """Binary sensor for Eco Mode status."""
+
+    def __init__(self, config_entry: AmbeoConfigEntry) -> None:
         """Initialize the Eco Mode sensor."""
-        super().__init__(device, api, "Eco Mode", "eco_mode")
-        self._is_on = None
+        super().__init__(
+            config_entry.runtime_data.coordinator,
+            config_entry.runtime_data.device,
+            "eco_mode",
+        )
+        self._attr_translation_key = "eco_mode"
 
     @property
-    def is_on(self):
-        """Return the current value of the sensor."""
-        return self._is_on
+    def is_on(self) -> bool | None:
+        """Return true if Eco Mode is on."""
+        if self.coordinator.data is None:
+            return None
+        return self.coordinator.data.get("eco_mode")
 
     @property
-    def available(self):
+    def available(self) -> bool:
         """Return if the sensor is available."""
-        return self._is_on is not None
-
-    async def async_update(self):
-        """Update the current status of the eco mode."""
-        _LOGGER.debug("Updating eco mode sensor...")
-        try:
-            status = await self.api.get_eco_mode()
-            self._is_on = status
-        except Exception as e:
-            _LOGGER.error("Failed to update eco mode status: %s", e)
+        return (
+            super().available
+            and self.coordinator.data is not None
+            and self.coordinator.data.get("eco_mode") is not None
+        )
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    config_entry: ConfigEntry,
+    config_entry: AmbeoConfigEntry,
     async_add_entities,
-):
-    """Set up the sensor entities from a config entry created in the integrations UI."""
-    ambeo_api: AmbeoApi = hass.data[DOMAIN][config_entry.entry_id]["api"]
-    ambeo_device = hass.data[DOMAIN][config_entry.entry_id]["device"]
-    entities = []
-    if ambeo_api.has_capability(Capability.ECO_MODE):
-        entities.append(EcoModeSensor(ambeo_device, ambeo_api))
-    async_add_entities(entities, update_before_add=True)
+) -> None:
+    """Set up binary sensor entities."""
+    api = config_entry.runtime_data.api
+    entities: list[BinarySensorEntity] = []
+
+    if api.has_capability(Capability.ECO_MODE):
+        entities.append(EcoModeSensor(config_entry))
+
+    async_add_entities(entities)
