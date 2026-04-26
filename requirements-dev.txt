@@ -1,32 +1,32 @@
 # Development dependencies for ha-ambeo-soundbar
 
 # Linting and formatting
-ruff>=0.8.0
+ruff>=0.15.12
 
 # Pre-commit hooks
-pre-commit>=4.0.0
+pre-commit>=4.6.0
 
 # Type checking
-mypy>=1.13.0
+mypy>=1.20.2
 
 # Security checks
-bandit[toml]>=1.7.10
+bandit[toml]>=1.9.4
 
 # Spell checking
-codespell>=2.3.0
+codespell>=2.4.2
 
 # Home Assistant for type hints and testing
-homeassistant>=2024.1.0
+homeassistant>=2024.3.3
 
 # Runtime dependencies (for development)
-aiohttp>=3.9.0
-voluptuous>=0.15.0
+aiohttp>=3.13.5
+voluptuous>=0.16.0
 
 # Testing (optional, for future use)
-pytest>=8.0.0
-pytest-asyncio>=0.24.0
-pytest-cov>=6.0.0
-pytest-homeassistant-custom-component>=0.13.0
+pytest>=9.0.3
+pytest-asyncio>=1.3.0
+pytest-cov>=7.1.0
+pytest-homeassistant-custom-component>=0.13.109
 
 # Development tools
-ipython>=8.12.0
+ipython>=9.13.0
