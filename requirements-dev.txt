@@ -1,7 +1,7 @@
 # Development dependencies for ha-ambeo-soundbar
 
 # Linting and formatting
-ruff>=0.16.6
+ruff>=0.16.9
 
 # Pre-commit hooks
 pre-commit>=4.6.2
