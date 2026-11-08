@@ -24,9 +24,9 @@ voluptuous>=0.16.0
 
 # Testing (optional, for future use)
 pytest>=9.2.0
-pytest-asyncio>=1.4.1
+pytest-asyncio>=1.4.1.post1
 pytest-cov>=7.1.0
 pytest-homeassistant-custom-component>=0.13.109
 
 # Development tools
-ipython>=9.17.1
+ipython>=9.18.1
